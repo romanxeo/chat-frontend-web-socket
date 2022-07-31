@@ -13,7 +13,7 @@ const Chat: React.FC = () => {
     const messagesList =  useSelector<AppRootStateType, messageType[]>(store => store.chat.messagesList)
 
     const [messageText, setMessageText] = useState<string>('')
-    //const [isAutoscroll, setIsAutoscroll] = useState<boolean>(true)
+    const [isAutoscroll, setIsAutoscroll] = useState<boolean>(true)
 
     const messagesAnchorRef = useRef<HTMLDivElement>(null);
 
@@ -48,8 +48,7 @@ const Chat: React.FC = () => {
     // }
 
     useEffect(() => {
-        //isAutoscroll && messagesAnchorRef.current?.scrollIntoView({behavior: 'smooth'})
-        messagesAnchorRef.current?.scrollIntoView({behavior: 'smooth'})
+        isAutoscroll && messagesAnchorRef.current?.scrollIntoView({behavior: 'smooth'})
     }, [messagesList])
 
     return (
