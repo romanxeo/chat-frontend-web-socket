@@ -1,34 +1,30 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import s from '../../App.module.css'
-import {socket} from "../../App";
-import {userInfoType} from "../../types/types";
+import {useDispatch} from "react-redux";
+import {createConnectionTC, setClientNameTC} from "../../store/chatReducer";
 
-type propsType = {
-    setUserInfo: (obj: userInfoType) => void
-}
+const SelectUser: React.FC = () => {
 
-const SelectUser: React.FC<propsType> = props => {
-
-    const {
-        setUserInfo
-    } = props
+    const dispatch = useDispatch()
 
     const [userNameText, setUserNameText] = useState<string>('')
 
-    const sendMessage = () => {
+    const sendName = () => {
         if (userNameText.length > 0) {
-            socket.emit("client-user-name-sent", userNameText)
-
-            setUserInfo({userName: userNameText, userId: userNameText})
+            dispatch(setClientNameTC(userNameText) as any)
             setUserNameText('')
         }
     }
+
+    useEffect(() => {
+        dispatch(createConnectionTC() as any)
+    }, [])
 
     return (
         <div className={`${s.pageBlock} ${s.pageSelectName}`}>
             <span>Enter name:</span>
             <input value={userNameText} onChange={(e) => setUserNameText(e.currentTarget.value)}/>
-            <button onClick={sendMessage}>Join to chat</button>
+            <button onClick={sendName}>Join to chat</button>
         </div>
     )
 }

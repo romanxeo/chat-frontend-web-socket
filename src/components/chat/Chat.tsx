@@ -1,28 +1,25 @@
 import React, {useEffect, useRef, useState} from 'react';
 import s from '../../App.module.css'
 import {messageType, userInfoType} from "../../types/types";
-import {socket} from "../../App";
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootStateType} from "../../store/store";
+import {destroyConnectionTC, setClientMessageTC} from "../../store/chatReducer";
 
-type propsType = {
-    userInfo: userInfoType
-}
+const Chat: React.FC = () => {
 
-const Chat: React.FC<propsType> = props => {
+    const dispatch = useDispatch()
 
-    const {
-        userInfo
-    } = props
-
-    const [messagesList, setMessagesList] = useState<messageType[]>([])
+    const userInfo = useSelector<AppRootStateType, userInfoType>(store => store.chat.userInfo)
+    const messagesList =  useSelector<AppRootStateType, messageType[]>(store => store.chat.messagesList)
 
     const [messageText, setMessageText] = useState<string>('')
-    const [isAutoscroll, setIsAutoscroll] = useState<boolean>(true)
+    //const [isAutoscroll, setIsAutoscroll] = useState<boolean>(true)
 
     const messagesAnchorRef = useRef<HTMLDivElement>(null);
 
-    const messages = messagesList.map((item) => {
+    const messages = messagesList.map((item: messageType) => {
         return (
-            <div className={s.message} key={item.messageId}>
+            <div className={`${s.message} ${userInfo.userId === item.userId && s.myMessage}`} key={item.messageId}>
                 <div>{item.userName}:</div>
                 <div>{item.messageText}</div>
                 <div>{item.created_at}</div>
@@ -30,39 +27,36 @@ const Chat: React.FC<propsType> = props => {
         )
     })
 
-    useEffect(() => {
-        socket.on('init-messages-published', (messagesList: messageType[]) => {
-            console.log(messagesList)
-            setMessagesList(messagesList)
-        })
-    }, [])
-
-    useEffect(() => {
-        socket.on('new-message-sent', (newMessage: messageType) => {
-            setMessagesList([...messagesList, newMessage])
-        })
-    })
+    // useEffect(() => {
+    //     //dispatch(createConnectionTC() as any)
+    //     //console.log("HUUUUUI")
+    //     return () => {
+    //         console.log('destroy connect')
+    //       //  dispatch(destroyConnectionTC() as any)
+    //     }
+    // }, [])
 
     const sendMessage = () => {
         if (messageText.length > 0) {
-            socket.emit("client-message-sent", messageText)
+            dispatch(setClientMessageTC(messageText) as any)
             setMessageText('')
         }
     }
 
-    const scrollChatEvent = (e: any) => {
-        //console.log(e.currentTarget.scrollHeight)
-    }
+    // const scrollChatEvent = (e: any) => {
+    //     //console.log(e.currentTarget.scrollHeight)
+    // }
 
     useEffect(() => {
-        isAutoscroll && messagesAnchorRef.current?.scrollIntoView({behavior: 'smooth'})
+        //isAutoscroll && messagesAnchorRef.current?.scrollIntoView({behavior: 'smooth'})
+        messagesAnchorRef.current?.scrollIntoView({behavior: 'smooth'})
     }, [messagesList])
 
     return (
         <div className={s.pageBlock}>
             <div
                 className={s.chatBlock}
-                onScroll={(e) => scrollChatEvent(e)}
+                //onScroll={(e) => scrollChatEvent(e)}
             >
                 {messages}
                 <span ref={messagesAnchorRef}></span>

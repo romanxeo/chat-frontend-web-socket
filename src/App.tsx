@@ -1,23 +1,27 @@
-import React, {useState} from 'react';
+import React from 'react';
 import s from './App.module.css';
-import {io} from "socket.io-client";
-import {userInfoType} from "./types/types";
 import SelectUser from "./components/selectUser/SelectUser";
 import Chat from "./components/chat/Chat";
+import {Provider, useSelector} from "react-redux";
+import {AppRootStateType, store} from "./store/store";
 
-export let socket = io("localhost:5000")
-
-function App() {
-
-    const [userInfo, setUserInfo] = useState<userInfoType>({userName: '', userId: ''})
-
+function _App() {
+    const userName = useSelector<AppRootStateType, string>(store => store.chat.userInfo.userName)
     return (
         <div className={s.App}>
-            {userInfo.userName.length === 0
-                ? <SelectUser setUserInfo={setUserInfo}/>
-                : <Chat userInfo={userInfo}/>
+            {userName.length === 0
+                ? <SelectUser/>
+                : <Chat/>
             }
         </div>
+    )
+}
+
+function App () {
+    return (
+        <Provider store={store}>
+            <_App />
+        </Provider>
     )
 }
 
