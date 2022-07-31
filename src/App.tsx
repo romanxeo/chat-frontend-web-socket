@@ -1,18 +1,24 @@
 import React, {useState} from 'react';
-import './App.module.css';
+import s from './App.module.css';
+import {io} from "socket.io-client";
+import {userInfoType} from "./types/types";
+import SelectUser from "./components/selectUser/SelectUser";
+import Chat from "./components/chat/Chat";
+
+export let socket = io("localhost:5000")
 
 function App() {
 
-  const [messagesList, setMessagesList] = useState([
-    {message: "Hello", id: 1, user: {id: 3, name: "Roman"}},
-    {message: "Buy", id: 2, user: {id: 4, name: "Vasya"}}
-  ])
+    const [userInfo, setUserInfo] = useState<userInfoType>({userName: '', userId: ''})
 
-  return (
-    <div className="App">
-      <div>Init</div>
-    </div>
-  );
+    return (
+        <div className={s.App}>
+            {userInfo.userName.length === 0
+                ? <SelectUser setUserInfo={setUserInfo}/>
+                : <Chat userInfo={userInfo}/>
+            }
+        </div>
+    )
 }
 
 export default App;
