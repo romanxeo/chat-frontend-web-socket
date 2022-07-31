@@ -1,18 +1,28 @@
-import React, {useState} from 'react';
-import './App.module.css';
+import React from 'react';
+import s from './App.module.css';
+import SelectUser from "./components/selectUser/SelectUser";
+import Chat from "./components/chat/Chat";
+import {Provider, useSelector} from "react-redux";
+import {AppRootStateType, store} from "./store/store";
 
-function App() {
+function _App() {
+    const userName = useSelector<AppRootStateType, string>(store => store.chat.userInfo.userName)
+    return (
+        <div className={s.App}>
+            {userName.length === 0
+                ? <SelectUser/>
+                : <Chat/>
+            }
+        </div>
+    )
+}
 
-  const [messagesList, setMessagesList] = useState([
-    {message: "Hello", id: 1, user: {id: 3, name: "Roman"}},
-    {message: "Buy", id: 2, user: {id: 4, name: "Vasya"}}
-  ])
-
-  return (
-    <div className="App">
-      <div>Init</div>
-    </div>
-  );
+function App () {
+    return (
+        <Provider store={store}>
+            <_App />
+        </Provider>
+    )
 }
 
 export default App;
