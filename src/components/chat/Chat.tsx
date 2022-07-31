@@ -29,7 +29,7 @@ const Chat: React.FC = () => {
 
     // useEffect(() => {
     //     //dispatch(createConnectionTC() as any)
-    //     //console.log("HUUUUUI")
+    //     //console.log("HUU1UUUI")
     //     return () => {
     //         console.log('destroy connect')
     //       //  dispatch(destroyConnectionTC() as any)
